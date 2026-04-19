@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Adrenaline — Plateforme Sport</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: #0a0a0a; color: #f0f0f0; min-height: 100vh; }
+
+    /* ── Navbar ── */
+    .navbar { background: #111; border-bottom: 1px solid #222; padding: 0 2rem; display: flex; align-items: center; height: 58px; position: sticky; top: 0; z-index: 100; }
+    .nav-logo { display: flex; align-items: center; gap: 10px; margin-right: 2.5rem; }
+    .logo-icon { width: 36px; height: 36px; background: #c0392b; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+    .logo-text { font-size: 20px; font-weight: 900; color: #fff; letter-spacing: -0.03em; }
+    .logo-text span { color: #c0392b; }
+    .nav-links { display: flex; flex: 1; }
+    .nav-link { padding: 0 1rem; height: 58px; display: flex; align-items: center; font-size: 12px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: #666; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.15s; user-select: none; }
+    .nav-link:hover { color: #fff; }
+    .nav-link.active { color: #c0392b; border-bottom-color: #c0392b; }
+    .nav-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+    .nav-cart { position: relative; cursor: pointer; }
+    .cart-badge { position: absolute; top: -4px; right: -6px; background: #c0392b; color: #fff; font-size: 9px; font-weight: 700; width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+    .btn-red { background: #c0392b; border: none; border-radius: 6px; padding: 9px 18px; font-size: 11px; font-weight: 800; letter-spacing: 0.08em; color: #fff; cursor: pointer; text-transform: uppercase; transition: all 0.15s; }
+    .btn-red:hover { background: #e74c3c; }
+    .btn-outline-red { background: transparent; border: 1px solid #c0392b; border-radius: 6px; padding: 8px 16px; font-size: 11px; font-weight: 700; color: #c0392b; cursor: pointer; text-transform: uppercase; letter-spacing: 0.06em; transition: all 0.15s; }
+    .btn-outline-red:hover { background: #c0392b; color: #fff; }
+    .btn-dark { background: #1e1e1e; border: 1px solid #333; border-radius: 6px; padding: 8px 16px; font-size: 11px; font-weight: 600; color: #aaa; cursor: pointer; transition: all 0.15s; }
+    .btn-dark:hover { border-color: #c0392b; color: #fff; }
+    .btn-danger { background: transparent; border: 1px solid #5a1a1a; border-radius: 6px; padding: 6px 12px; font-size: 11px; font-weight: 600; color: #c0392b; cursor: pointer; transition: all 0.15s; }
+    .btn-danger:hover { background: #2a0a0a; }
+
+    /* ── Hero ── */
+    .hero { background: #111; padding: 3.5rem 2rem; border-bottom: 1px solid #222; position: relative; overflow: hidden; }
+    .hero::before { content: ''; position: absolute; top: 0; right: 0; width: 50%; height: 100%; background: linear-gradient(135deg, transparent 0%, rgba(192,57,43,0.08) 100%); pointer-events: none; }
+    .hero-tag { font-size: 10px; letter-spacing: 0.16em; color: #c0392b; font-weight: 700; text-transform: uppercase; margin-bottom: 10px; }
+    .hero-title { font-size: 46px; font-weight: 900; color: #fff; letter-spacing: -0.04em; line-height: 1; }
+    .hero-title span { color: #c0392b; }
+    .hero-sub { font-size: 14px; color: #666; margin-top: 10px; max-width: 480px; line-height: 1.6; }
+    .hero-btns { display: flex; gap: 10px; margin-top: 20px; }
+    .hero-stats { display: flex; gap: 2rem; margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #222; }
+    .hstat { text-align: center; }
+    .hstat-val { font-size: 24px; font-weight: 800; color: #fff; }
+    .hstat-val span { color: #c0392b; }
+    .hstat-lbl { font-size: 10px; color: #555; text-transform: uppercase; letter-spacing: 0.08em; margin-top: 2px; }
+
+    /* ── Layout ── */
+    .content { padding: 1.5rem 2rem; max-width: 1300px; }
+    .section { display: none; }
+    .section.active { display: block; }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 1.25rem; }
+    .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 1.25rem; }
+    .grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 1.25rem; }
+    .grid-asym { grid-template-columns: 1.5fr 1fr; }
+
+    /* ── Cards ── */
+    .card { background: #111; border: 1px solid #222; border-radius: 10px; padding: 1.125rem; }
+    .card-title { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; color: #c0392b; margin-bottom: 1rem; text-transform: uppercase; }
+
+    /* ── Pills ── */
+    .pill { font-size: 10px; padding: 3px 9px; border-radius: 20px; font-weight: 700; letter-spacing: 0.04em; white-space: nowrap; }
+    .pill-red { background: #2a0a0a; color: #e74c3c; border: 1px solid #5a1a1a; }
+    .pill-green { background: #0a1e0a; color: #27ae60; border: 1px solid #1a4a1a; }
+    .pill-amber { background: #1e1a0a; color: #d4ac0d; border: 1px solid #4a3a0a; }
+    .pill-blue { background: #0a1020; color: #3498db; border: 1px solid #1a2a4a; }
+    .pill-gray { background: #1a1a1a; color: #888; border: 1px solid #333; }
+
+    /* ── Stat cards ── */
+    .sc { background: #111; border: 1px solid #222; border-radius: 10px; padding: 1rem; }
+    .sc-label { font-size: 10px; color: #555; letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 5px; }
+    .sc-val { font-size: 26px; font-weight: 800; color: #fff; line-height: 1; }
+    .sc-val.red { color: #c0392b; }
+    .sc-val small { font-size: 13px; font-weight: 400; color: #555; }
+    .sc-sub { font-size: 11px; margin-top: 4px; color: #555; }
+    .sc-sub.up { color: #27ae60; }
+    .sc-sub.dn { color: #c0392b; }
+
+    /* ── Products ── */
+    .products-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 1.25rem; }
+    .product-card { background: #111; border: 1px solid #222; border-radius: 10px; overflow: hidden; cursor: pointer; transition: border-color 0.15s; }
+    .product-card:hover { border-color: #c0392b; }
+    .product-img { height: 140px; background: #1a1a1a; display: flex; align-items: center; justify-content: center; font-size: 48px; border-bottom: 1px solid #222; }
+    .product-body { padding: 0.875rem; }
+    .product-name { font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 4px; }
+    .product-cat { font-size: 10px; color: #555; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+    .product-price { font-size: 16px; font-weight: 800; color: #c0392b; font-family: 'Courier New', monospace; }
+    .product-price-old { font-size: 11px; color: #555; text-decoration: line-through; margin-left: 5px; }
+    .product-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; padding-top: 10px; border-top: 1px solid #1e1e1e; }
+    .stars { color: #d4ac0d; font-size: 11px; }
+
+    /* ── Filter bar ── */
+    .filter-row { display: flex; align-items: center; gap: 8px; margin-bottom: 1.25rem; flex-wrap: wrap; }
+    .filter-btn { font-size: 11px; padding: 6px 14px; border: 1px solid #333; border-radius: 20px; background: transparent; color: #666; cursor: pointer; transition: all 0.15s; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+    .filter-btn:hover, .filter-btn.active { background: #c0392b; color: #fff; border-color: #c0392b; }
+
+    /* ── Terrains ── */
+    .terrain-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 1.25rem; }
+    .terrain-card { background: #111; border: 1px solid #222; border-radius: 10px; overflow: hidden; transition: border-color 0.15s; }
+    .terrain-card:hover { border-color: #c0392b; }
+    .terrain-img { height: 120px; display: flex; align-items: center; justify-content: center; font-size: 44px; border-bottom: 1px solid #222; }
+    .terrain-body { padding: 0.875rem; }
+    .terrain-name { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+    .terrain-loc { font-size: 11px; color: #666; margin-bottom: 8px; }
+    .terrain-info { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+    .terrain-price { font-size: 15px; font-weight: 800; color: #c0392b; font-family: 'Courier New', monospace; }
+    .terrain-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; padding-top: 8px; border-top: 1px solid #1e1e1e; }
+
+    /* ── Booking form ── */
+    .booking-overlay { background: #0a0a0a; border: 1px solid #333; border-radius: 12px; padding: 1.25rem; margin-bottom: 1.25rem; display: none; }
+    .booking-overlay.active { display: block; }
+    .form-group { margin-bottom: 0.875rem; }
+    .form-label { font-size: 10px; font-weight: 700; letter-spacing: 0.09em; color: #c0392b; text-transform: uppercase; display: block; margin-bottom: 5px; }
+    .form-input { width: 100%; background: #111; border: 1px solid #333; border-radius: 6px; padding: 10px 13px; font-size: 13px; color: #f0f0f0; outline: none; transition: border 0.15s; font-family: inherit; }
+    .form-input:focus { border-color: #c0392b; }
+    .form-input::placeholder { color: #444; }
+    select.form-input { cursor: pointer; }
+
+    /* ── Cart ── */
+    .cart-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid #1e1e1e; }
+    .cart-item:last-child { border-bottom: none; }
+    .cart-ico { width: 44px; height: 44px; background: #1a1a1a; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+    .cart-name { font-size: 13px; font-weight: 600; color: #fff; }
+    .cart-sub { font-size: 11px; color: #555; margin-top: 2px; }
+    .cart-price { font-size: 14px; font-weight: 800; color: #c0392b; font-family: 'Courier New', monospace; margin-left: auto; }
+    .qty-ctrl { display: flex; align-items: center; gap: 6px; }
+    .qty-btn { width: 24px; height: 24px; border-radius: 4px; background: #1e1e1e; border: 1px solid #333; color: #fff; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+    .qty-btn:hover { background: #c0392b; border-color: #c0392b; }
+    .qty-val { font-size: 13px; font-weight: 700; color: #fff; min-width: 20px; text-align: center; }
+
+    /* ── Profile ── */
+    .profile-header { background: #111; border: 1px solid #222; border-radius: 12px; padding: 1.5rem; display: flex; align-items: center; gap: 1.25rem; margin-bottom: 1.25rem; }
+    .profile-av { width: 64px; height: 64px; border-radius: 50%; background: #c0392b; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 800; color: #fff; flex-shrink: 0; }
+    .profile-name { font-size: 18px; font-weight: 800; color: #fff; }
+    .profile-email { font-size: 12px; color: #666; margin-top: 3px; }
+    .profile-since { font-size: 11px; color: #555; margin-top: 2px; }
+
+    /* ── Tables ── */
+    .tbl { width: 100%; border-collapse: collapse; font-size: 12px; table-layout: fixed; }
+    .tbl th { text-align: left; font-size: 10px; font-weight: 700; color: #555; padding: 0 0 9px; border-bottom: 1px solid #222; text-transform: uppercase; letter-spacing: 0.06em; }
+    .tbl td { padding: 9px 0; border-bottom: 1px solid #1a1a1a; color: #ccc; vertical-align: middle; font-size: 11px; }
+    .tbl tr:last-child td { border-bottom: none; }
+
+    /* ── KV ── */
+    .kv { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #1a1a1a; font-size: 12px; }
+    .kv:last-child { border: none; }
+    .kv-k { color: #555; }
+    .kv-v { font-weight: 600; color: #fff; }
+
+    /* ── Bar chart ── */
+    .bar-chart { display: flex; align-items: flex-end; gap: 5px; height: 80px; }
+    .b-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+    .b-bar { width: 100%; border-radius: 3px 3px 0 0; background: #c0392b; opacity: 0.75; }
+    .b-lbl { font-size: 9px; color: #555; }
+
+    /* ── Timeline ── */
+    .tl-item { display: flex; gap: 10px; margin-bottom: 12px; }
+    .tl-item:last-child { margin-bottom: 0; }
+    .tl-left { display: flex; flex-direction: column; align-items: center; }
+    .tl-dot { width: 9px; height: 9px; border-radius: 50%; border: 2px solid; flex-shrink: 0; margin-top: 3px; }
+    .tl-dot.ok { background: #0a1e0a; border-color: #27ae60; }
+    .tl-dot.warn { background: #1e1a0a; border-color: #d4ac0d; }
+    .tl-dot.red { background: #2a0a0a; border-color: #c0392b; }
+    .tl-line { width: 1.5px; flex: 1; background: #222; margin-top: 4px; }
+    .tl-text { font-size: 12px; font-weight: 600; color: #ccc; }
+    .tl-sub { font-size: 11px; color: #555; margin-top: 2px; }
+
+    /* ── Promo banner ── */
+    .promo { background: #c0392b; border-radius: 10px; padding: 1rem 1.25rem; display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; }
+    .promo-text { font-size: 14px; font-weight: 700; color: #fff; }
+    .promo-sub { font-size: 11px; color: rgba(255,255,255,0.7); margin-top: 2px; }
+    .msg-ok { font-size: 11px; color: #27ae60; margin-top: 8px; text-align: center; min-height: 18px; }
+    .section-sep { border: none; border-top: 1px solid #1e1e1e; margin: 1.25rem 0; }
+
+    /* ── Slot grid ── */
+    .slots { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; margin: 0.75rem 0; }
+    .slot { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 5px; padding: 6px; text-align: center; font-size: 11px; color: #aaa; cursor: pointer; transition: all 0.15s; }
+    .slot:hover, .slot.selected { background: #c0392b; color: #fff; border-color: #c0392b; font-weight: 700; }
+    .slot.taken { background: #1a1a1a; color: #3a3a3a; cursor: not-allowed; border-color: #1e1e1e; }
+  </style>
+</head>
+<body>
+
+<!-- ══ NAVBAR ══ -->
+<div class="navbar">
+  <div class="nav-logo">
+    <div class="logo-icon">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2L3 7v11h14V7L10 2z" stroke="#fff" stroke-width="1.5"/><path d="M10 2l4 8-4 2-4-2 4-8z" fill="#fff" opacity="0.3"/></svg>
+    </div>
+    <div class="logo-text">ADRÉNA<span>LINE</span></div>
+  </div>
+  <div class="nav-links">
+    <div class="nav-link active" onclick="nav(this,'home')">Accueil</div>
+    <div class="nav-link" onclick="nav(this,'shop')">Boutique</div>
+    <div class="nav-link" onclick="nav(this,'terrains')">Terrains</div>
+    <div class="nav-link" onclick="nav(this,'profil')">Mon profil</div>
+    <div class="nav-link" onclick="nav(this,'admin')">Admin</div>
+  </div>
+  <div class="nav-right">
+    <div class="nav-cart" onclick="nav(document.querySelectorAll('.nav-link')[3],'profil')">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M3 3h2l2.5 10h9l2-7H7" stroke="#aaa" stroke-width="1.5" stroke-linecap="round"/><circle cx="9" cy="17" r="1.5" fill="#aaa"/><circle cx="16" cy="17" r="1.5" fill="#aaa"/></svg>
+      <div class="cart-badge" id="cart-badge">3</div>
+    </div>
+    <button class="btn-outline-red" onclick="nav(document.querySelectorAll('.nav-link')[3],'profil')">Mon compte</button>
+    <button class="btn-red">Déconnexion</button>
+  </div>
+</div>
+
+<!-- ══ CONTENT ══ -->
+<div class="content">
+
+  <!-- HOME -->
+  <div id="section-home" class="section active">
+    <div class="hero">
+      <div class="hero-tag">Plateforme sport tout-en-un</div>
+      <div class="hero-title">ADRÉNA<span>LINE</span></div>
+      <div class="hero-sub">Achetez vos équipements sportifs, réservez vos terrains de foot, tennis, volleyball et bien plus — tout en un seul endroit.</div>
+      <div class="hero-btns">
+        <button class="btn-red" onclick="nav(document.querySelectorAll('.nav-link')[1],'shop')">Voir la boutique</button>
+        <button class="btn-outline-red" onclick="nav(document.querySelectorAll('.nav-link')[2],'terrains')">Réserver un terrain</button>
+      </div>
+      <div class="hero-stats">
+        <div class="hstat"><div class="hstat-val">500<span>+</span></div><div class="hstat-lbl">Produits</div></div>
+        <div class="hstat"><div class="hstat-val">30<span>+</span></div><div class="hstat-lbl">Terrains</div></div>
+        <div class="hstat"><div class="hstat-val">2 400<span>+</span></div><div class="hstat-lbl">Utilisateurs</div></div>
+        <div class="hstat"><div class="hstat-val">98<span>%</span></div><div class="hstat-lbl">Satisfaction</div></div>
+      </div>
+    </div>
+
+    <div style="height:1.5rem"></div>
+
+    <div class="promo">
+      <div><div class="promo-text">Promo ramadan — 30% sur tous les équipements</div><div class="promo-sub">Offre valable jusqu'au 30 avril · Code : SPORT30</div></div>
+      <button class="btn-red" onclick="nav(document.querySelectorAll('.nav-link')[1],'shop')" style="white-space:nowrap">En profiter</button>
+    </div>
+
+    <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;color:#c0392b;text-transform:uppercase;margin-bottom:1rem">Catégories populaires</div>
+    <div class="grid4" style="margin-bottom:1.5rem">
+      <div class="card" style="text-align:center;cursor:pointer" onclick="nav(document.querySelectorAll('.nav-link')[1],'shop')">
+        <div style="font-size:36px;margin-bottom:8px">⚽</div>
+        <div style="font-size:13px;font-weight:700;color:#fff">Football</div>
+        <div style="font-size:10px;color:#555;margin-top:2px">124 articles</div>
+      </div>
+      <div class="card" style="text-align:center;cursor:pointer" onclick="nav(document.querySelectorAll('.nav-link')[1],'shop')">
+        <div style="font-size:36px;margin-bottom:8px">🎾</div>
+        <div style="font-size:13px;font-weight:700;color:#fff">Tennis</div>
+        <div style="font-size:10px;color:#555;margin-top:2px">89 articles</div>
+      </div>
+      <div class="card" style="text-align:center;cursor:pointer" onclick="nav(document.querySelectorAll('.nav-link')[1],'shop')">
+        <div style="font-size:36px;margin-bottom:8px">🏀</div>
+        <div style="font-size:13px;font-weight:700;color:#fff">Basketball</div>
+        <div style="font-size:10px;color:#555;margin-top:2px">67 articles</div>
+      </div>
+      <div class="card" style="text-align:center;cursor:pointer" onclick="nav(document.querySelectorAll('.nav-link')[1],'shop')">
+        <div style="font-size:36px;margin-bottom:8px">🏐</div>
+        <div style="font-size:13px;font-weight:700;color:#fff">Volleyball</div>
+        <div style="font-size:10px;color:#555;margin-top:2px">43 articles</div>
+      </div>
+    </div>
+
+    <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;color:#c0392b;text-transform:uppercase;margin-bottom:1rem">Terrains disponibles aujourd'hui</div>
+    <div class="grid3">
+      <div class="terrain-card">
+        <div class="terrain-img" style="background:#0d1a0d">⚽</div>
+        <div class="terrain-body">
+          <div class="terrain-name">Terrain Foot 11 · Ariana</div>
+          <div class="terrain-loc">Ariana Ville · Gazon naturel</div>
+          <div class="terrain-info"><span class="pill pill-green">Disponible</span><span class="pill pill-gray">11 vs 11</span></div>
+          <div class="terrain-footer"><div class="terrain-price">35 DT<span style="font-size:10px;font-weight:400;color:#555">/h</span></div><button class="btn-red" style="padding:7px 14px;font-size:11px" onclick="nav(document.querySelectorAll('.nav-link')[2],'terrains')">Réserver</button></div>
+        </div>
+      </div>
+      <div class="terrain-card">
+        <div class="terrain-img" style="background:#1a1a0d">🎾</div>
+        <div class="terrain-body">
+          <div class="terrain-name">Court Tennis · La Soukra</div>
+          <div class="terrain-loc">La Soukra · Surface dure</div>
+          <div class="terrain-info"><span class="pill pill-green">Disponible</span><span class="pill pill-gray">Simple / Double</span></div>
+          <div class="terrain-footer"><div class="terrain-price">25 DT<span style="font-size:10px;font-weight:400;color:#555">/h</span></div><button class="btn-red" style="padding:7px 14px;font-size:11px" onclick="nav(document.querySelectorAll('.nav-link')[2],'terrains')">Réserver</button></div>
+        </div>
+      </div>
+      <div class="terrain-card">
+        <div class="terrain-img" style="background:#0d0d1a">🏐</div>
+        <div class="terrain-body">
+          <div class="terrain-name">Terrain Volley · Manouba</div>
+          <div class="terrain-loc">Manouba · Sable</div>
+          <div class="terrain-info"><span class="pill pill-amber">2 créneaux</span><span class="pill pill-gray">6 vs 6</span></div>
+          <div class="terrain-footer"><div class="terrain-price">20 DT<span style="font-size:10px;font-weight:400;color:#555">/h</span></div><button class="btn-red" style="padding:7px 14px;font-size:11px" onclick="nav(document.querySelectorAll('.nav-link')[2],'terrains')">Réserver</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SHOP -->
+  <div id="section-shop" class="section">
+    <div class="filter-row">
+      <span style="font-size:11px;color:#555;font-weight:600">Catégorie :</span>
+      <button class="filter-btn active" onclick="filterProducts(this,'all')">Tout</button>
+      <button class="filter-btn" onclick="filterProducts(this,'football')">Football</button>
+      <button class="filter-btn" onclick="filterProducts(this,'tennis')">Tennis</button>
+      <button class="filter-btn" onclick="filterProducts(this,'basketball')">Basketball</button>
+      <button class="filter-btn" onclick="filterProducts(this,'running')">Running</button>
+      <button class="filter-btn" onclick="filterProducts(this,'fitness')">Fitness</button>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
+        <span style="font-size:11px;color:#555">Trier :</span>
+        <select style="background:#111;border:1px solid #333;color:#aaa;padding:5px 8px;border-radius:6px;font-size:11px;outline:none">
+          <option>Prix croissant</option>
+          <option>Prix décroissant</option>
+          <option>Mieux notés</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="products-grid" id="products-grid"></div>
+
+    <div id="cart-section" style="margin-top:1rem">
+      <div class="card">
+        <div class="card-title">Panier (<span id="cart-count">3</span> articles)</div>
+        <div id="cart-items"></div>
+        <hr class="section-sep"/>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div style="font-size:11px;color:#555">Total panier</div>
+            <div style="font-size:22px;font-weight:800;color:#c0392b;font-family:'Courier New',monospace" id="cart-total">285 DT</div>
+          </div>
+          <button class="btn-red" style="padding:12px 24px">Passer la commande</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TERRAINS -->
+  <div id="section-terrains" class="section">
+    <div class="filter-row">
+      <span style="font-size:11px;color:#555;font-weight:600">Sport :</span>
+      <button class="filter-btn active" onclick="filterTerrains(this,'all')">Tous</button>
+      <button class="filter-btn" onclick="filterTerrains(this,'foot')">Football</button>
+      <button class="filter-btn" onclick="filterTerrains(this,'tennis')">Tennis</button>
+      <button class="filter-btn" onclick="filterTerrains(this,'volley')">Volleyball</button>
+      <button class="filter-btn" onclick="filterTerrains(this,'basket')">Basketball</button>
+      <button class="filter-btn" onclick="filterTerrains(this,'padel')">Padel</button>
+    </div>
+
+    <div class="terrain-grid" id="terrains-grid"></div>
+
+    <div id="booking-form" class="booking-overlay">
+      <div class="card-title" id="booking-title">Réserver un terrain</div>
+      <div class="grid2">
+        <div>
+          <div class="form-group">
+            <label class="form-label">Date</label>
+            <input class="form-input" type="date" id="book-date"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Durée</label>
+            <select class="form-input" id="book-dur">
+              <option>1 heure</option>
+              <option>2 heures</option>
+              <option>3 heures</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Nombre de joueurs</label>
+            <input class="form-input" type="number" placeholder="Ex: 10" min="2" max="22"/>
+          </div>
+        </div>
+        <div>
+          <div class="form-label" style="margin-bottom:8px">Créneaux disponibles</div>
+          <div class="slots">
+            <div class="slot taken">08:00</div>
+            <div class="slot taken">09:00</div>
+            <div class="slot" onclick="selectSlot(this)">10:00</div>
+            <div class="slot" onclick="selectSlot(this)">11:00</div>
+            <div class="slot taken">12:00</div>
+            <div class="slot" onclick="selectSlot(this)">13:00</div>
+            <div class="slot" onclick="selectSlot(this)">14:00</div>
+            <div class="slot" onclick="selectSlot(this)">15:00</div>
+            <div class="slot taken">16:00</div>
+            <div class="slot" onclick="selectSlot(this)">17:00</div>
+            <div class="slot" onclick="selectSlot(this)">18:00</div>
+            <div class="slot" onclick="selectSlot(this)">19:00</div>
+          </div>
+          <div style="font-size:10px;color:#555;margin-top:6px;display:flex;gap:10px">
+            <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:2px;display:inline-block"></span>Disponible</span>
+            <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;background:#c0392b;border-radius:2px;display:inline-block"></span>Sélectionné</span>
+            <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;background:#1a1a1a;border:1px solid #1e1e1e;border-radius:2px;display:inline-block"></span>Réservé</span>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:0.5rem">
+        <button class="btn-red" onclick="confirmBooking()" style="flex:1;padding:12px">Confirmer la réservation</button>
+        <button class="btn-dark" onclick="document.getElementById('booking-form').classList.remove('active')">Annuler</button>
+      </div>
+      <div class="msg-ok" id="booking-msg"></div>
+    </div>
+  </div>
+
+  <!-- PROFIL -->
+  <div id="section-profil" class="section">
+    <div class="profile-header">
+      <div class="profile-av">SE</div>
+      <div style="flex:1">
+        <div class="profile-name">Sarra Elkamel</div>
+        <div class="profile-email">sarraelkamel99@gmail.com · +216 25 488 268</div>
+        <div class="profile-since">Membre depuis janvier 2023 · Tunis, Tunisie</div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <span class="pill pill-red">Client Premium</span>
+        <button class="btn-outline-red">Modifier profil</button>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div>
+        <div class="card" style="margin-bottom:1rem">
+          <div class="card-title">Mes commandes récentes</div>
+          <table class="tbl">
+            <thead><tr><th style="width:14%">#</th><th style="width:36%">Produit</th><th style="width:18%">Montant</th><th style="width:16%">Date</th><th style="width:16%">Statut</th></tr></thead>
+            <tbody>
+              <tr><td style="color:#555">#1042</td><td>Ballon Nike Pro</td><td style="color:#c0392b;font-family:monospace">65 DT</td><td style="color:#555;font-size:10px">12/04/2025</td><td><span class="pill pill-green">Livré</span></td></tr>
+              <tr><td style="color:#555">#1038</td><td>Raquette Wilson</td><td style="color:#c0392b;font-family:monospace">180 DT</td><td style="color:#555;font-size:10px">08/04/2025</td><td><span class="pill pill-green">Livré</span></td></tr>
+              <tr><td style="color:#555">#1031</td><td>Chaussures Adidas</td><td style="color:#c0392b;font-family:monospace">220 DT</td><td style="color:#555;font-size:10px">02/04/2025</td><td><span class="pill pill-amber">En cours</span></td></tr>
+              <tr><td style="color:#555">#1024</td><td>Kit gardien Pro</td><td style="color:#c0392b;font-family:monospace">145 DT</td><td style="color:#555;font-size:10px">28/03/2025</td><td><span class="pill pill-green">Livré</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card">
+          <div class="card-title">Mes réservations terrains</div>
+          <table class="tbl">
+            <thead><tr><th style="width:30%">Terrain</th><th style="width:20%">Date</th><th style="width:15%">Heure</th><th style="width:15%">Prix</th><th style="width:20%">Statut</th></tr></thead>
+            <tbody>
+              <tr><td>Foot Ariana</td><td style="color:#555;font-size:10px">19/04/2025</td><td style="color:#555">18:00</td><td style="color:#c0392b;font-family:monospace">35 DT</td><td><span class="pill pill-green">Confirmé</span></td></tr>
+              <tr><td>Tennis Soukra</td><td style="color:#555;font-size:10px">15/04/2025</td><td style="color:#555">10:00</td><td style="color:#c0392b;font-family:monospace">25 DT</td><td><span class="pill pill-green">Confirmé</span></td></tr>
+              <tr><td>Volley Manouba</td><td style="color:#555;font-size:10px">10/04/2025</td><td style="color:#555">16:00</td><td style="color:#c0392b;font-family:monospace">20 DT</td><td><span class="pill pill-gray">Terminé</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div>
+        <div class="card" style="margin-bottom:1rem">
+          <div class="card-title">Mon panier</div>
+          <div id="profil-cart"></div>
+          <hr class="section-sep"/>
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div><div style="font-size:10px;color:#555">Total</div><div style="font-size:20px;font-weight:800;color:#c0392b;font-family:'Courier New',monospace" id="profil-total">285 DT</div></div>
+            <button class="btn-red">Commander</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Statistiques personnelles</div>
+          <div class="kv"><span class="kv-k">Total dépensé</span><span class="kv-v" style="color:#c0392b">610 DT</span></div>
+          <div class="kv"><span class="kv-k">Commandes totales</span><span class="kv-v">7</span></div>
+          <div class="kv"><span class="kv-k">Terrains réservés</span><span class="kv-v">5</span></div>
+          <div class="kv"><span class="kv-k">Sport favori</span><span class="kv-v">Football</span></div>
+          <div class="kv"><span class="kv-k">Points fidélité</span><span class="kv-v" style="color:#c0392b">1 220 pts</span></div>
+          <div class="kv"><span class="kv-k">Niveau</span><span class="kv-v"><span class="pill pill-red">Premium</span></span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADMIN -->
+  <div id="section-admin" class="section">
+    <div class="grid4">
+      <div class="sc"><div class="sc-label">Chiffre d'affaires</div><div class="sc-val red">48 720 <small>DT</small></div><div class="sc-sub up">+22% ce mois</div></div>
+      <div class="sc"><div class="sc-label">Commandes</div><div class="sc-val">312</div><div class="sc-sub up">+18 aujourd'hui</div></div>
+      <div class="sc"><div class="sc-label">Réservations terrains</div><div class="sc-val">187</div><div class="sc-sub up">+8 ce week-end</div></div>
+      <div class="sc"><div class="sc-label">Utilisateurs actifs</div><div class="sc-val">2 418</div><div class="sc-sub up">+34 ce mois</div></div>
+    </div>
+
+    <div class="grid2">
+      <div class="card">
+        <div class="card-title">Ventes par sport — cette semaine</div>
+        <div class="bar-chart">
+          <div class="b-wrap"><div class="b-bar" style="height:70px"></div><div class="b-lbl">Foot</div></div>
+          <div class="b-wrap"><div class="b-bar" style="height:45px"></div><div class="b-lbl">Tennis</div></div>
+          <div class="b-wrap"><div class="b-bar" style="height:38px"></div><div class="b-lbl">Basket</div></div>
+          <div class="b-wrap"><div class="b-bar" style="height:28px"></div><div class="b-lbl">Volley</div></div>
+          <div class="b-wrap"><div class="b-bar" style="height:50px"></div><div class="b-lbl">Running</div></div>
+          <div class="b-wrap"><div class="b-bar" style="height:32px"></div><div class="b-lbl">Fitness</div></div>
+          <div class="b-wrap"><div class="b-bar" style="height:22px"></div><div class="b-lbl">Padel</div></div>
+        </div>
+        <hr class="section-sep"/>
+        <div class="card-title">Activité récente</div>
+        <div class="tl-item"><div class="tl-left"><div class="tl-dot ok"></div><div class="tl-line"></div></div><div><div class="tl-text">Commande #1042 livrée — Sarra E.</div><div class="tl-sub">Il y a 12 min · Ballon Nike · 65 DT</div></div></div>
+        <div class="tl-item"><div class="tl-left"><div class="tl-dot ok"></div><div class="tl-line"></div></div><div><div class="tl-text">Réservation confirmée — Terrain Ariana</div><div class="tl-sub">Il y a 28 min · 18h00 · 35 DT</div></div></div>
+        <div class="tl-item"><div class="tl-left"><div class="tl-dot warn"></div><div class="tl-line"></div></div><div><div class="tl-text">Stock faible — Chaussures Adidas T42</div><div class="tl-sub">Il y a 1h · 3 unités restantes</div></div></div>
+        <div class="tl-item"><div class="tl-left"><div class="tl-dot red"></div></div><div><div class="tl-text">Annulation réservation — Court Tennis</div><div class="tl-sub">Il y a 2h · Remboursement initié</div></div></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Gestion des produits</div>
+        <table class="tbl">
+          <thead><tr><th style="width:36%">Produit</th><th style="width:18%">Prix</th><th style="width:16%">Stock</th><th style="width:30%">Actions</th></tr></thead>
+          <tbody>
+            <tr><td>Ballon Nike Pro</td><td style="color:#c0392b;font-family:monospace">65 DT</td><td><span class="pill pill-green">42</span></td><td><button class="btn-dark" style="padding:4px 8px;font-size:10px">Modifier</button> <button class="btn-danger" style="padding:4px 8px;font-size:10px">Supp.</button></td></tr>
+            <tr><td>Raquette Wilson</td><td style="color:#c0392b;font-family:monospace">180 DT</td><td><span class="pill pill-green">18</span></td><td><button class="btn-dark" style="padding:4px 8px;font-size:10px">Modifier</button> <button class="btn-danger" style="padding:4px 8px;font-size:10px">Supp.</button></td></tr>
+            <tr><td>Chaussures Adidas</td><td style="color:#c0392b;font-family:monospace">220 DT</td><td><span class="pill pill-amber">3</span></td><td><button class="btn-dark" style="padding:4px 8px;font-size:10px">Modifier</button> <button class="btn-danger" style="padding:4px 8px;font-size:10px">Supp.</button></td></tr>
+            <tr><td>Kit gardien Pro</td><td style="color:#c0392b;font-family:monospace">145 DT</td><td><span class="pill pill-green">27</span></td><td><button class="btn-dark" style="padding:4px 8px;font-size:10px">Modifier</button> <button class="btn-danger" style="padding:4px 8px;font-size:10px">Supp.</button></td></tr>
+            <tr><td>Filet volleyball</td><td style="color:#c0392b;font-family:monospace">55 DT</td><td><span class="pill pill-red">1</span></td><td><button class="btn-dark" style="padding:4px 8px;font-size:10px">Modifier</button> <button class="btn-danger" style="padding:4px 8px;font-size:10px">Supp.</button></td></tr>
+          </tbody>
+        </table>
+        <hr class="section-sep"/>
+        <div class="card-title">Gestion des terrains</div>
+        <table class="tbl">
+          <thead><tr><th style="width:40%">Terrain</th><th style="width:20%">Prix/h</th><th style="width:20%">Statut</th><th style="width:20%">Actions</th></tr></thead>
+          <tbody>
+            <tr><td>Foot Ariana</td><td style="color:#c0392b;font-family:monospace">35 DT</td><td><span class="pill pill-green">Ouvert</span></td><td><button class="btn-dark" style="padding:4px 8px;font-size:10px">Gérer</button></td></tr>
+            <tr><td>Tennis Soukra</td><td style="color:#c0392b;font-family:monospace">25 DT</td><td><span class="pill pill-green">Ouvert</span></td><td><button class="btn-dark" style="padding:4px 8px;font-size:10px">Gérer</button></td></tr>
+            <tr><td>Volley Manouba</td><td style="color:#c0392b;font-family:monospace">20 DT</td><td><span class="pill pill-amber">Partiel</span></td><td><button class="btn-dark" style="padding:4px 8px;font-size:10px">Gérer</button></td></tr>
+            <tr><td>Padel Ben Arous</td><td style="color:#c0392b;font-family:monospace">40 DT</td><td><span class="pill pill-red">Fermé</span></td><td><button class="btn-dark" style="padding:4px 8px;font-size:10px">Gérer</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const products = [
+  {name:'Ballon Nike Premier',cat:'football',emoji:'⚽',price:65,old:85,stars:5,stock:42},
+  {name:'Raquette Wilson Clash',cat:'tennis',emoji:'🎾',price:180,old:220,stars:5,stock:18},
+  {name:'Ballon Spalding NBA',cat:'basketball',emoji:'🏀',price:95,old:null,stars:4,stock:30},
+  {name:'Filet Volley Pro',cat:'volleyball',emoji:'🏐',price:55,old:70,stars:4,stock:12},
+  {name:'Chaussures Adidas X',cat:'football',emoji:'👟',price:220,old:280,stars:5,stock:3},
+  {name:'Kit Gardien Pro',cat:'football',emoji:'🧤',price:145,old:null,stars:4,stock:27},
+  {name:'Raquette Padel Babolat',cat:'tennis',emoji:'🏓',price:210,old:250,stars:5,stock:8},
+  {name:'Chaussures Running Nike',cat:'running',emoji:'🏃',price:175,old:200,stars:4,stock:22},
+  {name:'Haltères 20kg',cat:'fitness',emoji:'🏋️',price:120,old:null,stars:4,stock:15},
+  {name:'Maillot Football Pro',cat:'football',emoji:'👕',price:45,old:60,stars:5,stock:50},
+  {name:'Corde à sauter Pro',cat:'fitness',emoji:'⚡',price:28,old:null,stars:4,stock:35},
+  {name:'Short Basketball',cat:'basketball',emoji:'🩳',price:35,old:45,stars:4,stock:40},
+];
+
+const cart = [
+  {name:'Ballon Nike Premier',emoji:'⚽',price:65,qty:1},
+  {name:'Raquette Wilson Clash',emoji:'🎾',price:180,qty:1},
+  {name:'Short Basketball',emoji:'🩳',price:35,qty:2},
+];
+
+const terrains = [
+  {name:'Terrain Foot 11 · Ariana',sport:'foot',emoji:'⚽',bg:'#0d1a0d',loc:'Ariana Ville · Gazon naturel',price:35,status:'Disponible',sc:'pill-green',cap:'11 vs 11'},
+  {name:'Terrain Foot 5 · Manouba',sport:'foot',emoji:'⚽',bg:'#0d1a0d',loc:'Manouba · Gazon synthétique',price:28,status:'Disponible',sc:'pill-green',cap:'5 vs 5'},
+  {name:'Court Tennis · La Soukra',sport:'tennis',emoji:'🎾',bg:'#1a1a0d',loc:'La Soukra · Surface dure',price:25,status:'Disponible',sc:'pill-green',cap:'Simple/Double'},
+  {name:'Court Tennis · Ben Arous',sport:'tennis',emoji:'🎾',bg:'#1a1a0d',loc:'Ben Arous · Terre battue',price:22,status:'2 créneaux',sc:'pill-amber',cap:'Simple/Double'},
+  {name:'Terrain Volley · Manouba',sport:'volley',emoji:'🏐',bg:'#0d0d1a',loc:'Manouba · Sable',price:20,status:'Disponible',sc:'pill-green',cap:'6 vs 6'},
+  {name:'Terrain Basket · Ariana',sport:'basket',emoji:'🏀',bg:'#1a0d0d',loc:'Ariana · Parquet intérieur',price:30,status:'Complet',sc:'pill-red',cap:'5 vs 5'},
+  {name:'Terrain Padel · Ben Arous',sport:'padel',emoji:'🏓',bg:'#1a1a0d',loc:'Ben Arous · Vitres',price:40,status:'Disponible',sc:'pill-green',cap:'2 vs 2'},
+  {name:'Terrain Foot 7 · Ettadhamen',sport:'foot',emoji:'⚽',bg:'#0d1a0d',loc:'Ettadhamen · Gazon synthétique',price:30,status:'1 créneau',sc:'pill-amber',cap:'7 vs 7'},
+  {name:'Court Tennis · Ariana',sport:'tennis',emoji:'🎾',bg:'#1a1a0d',loc:'Ariana · Surface dure',price:25,status:'Disponible',sc:'pill-green',cap:'Simple/Double'},
+];
+
+function nav(el, id) {
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  if (el && el.classList) el.classList.add('active');
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById('section-' + id).classList.add('active');
+}
+
+function renderProducts(filter) {
+  const grid = document.getElementById('products-grid');
+  grid.innerHTML = '';
+  products.filter(p => filter === 'all' || p.cat === filter).forEach(p => {
+    const d = document.createElement('div');
+    d.className = 'product-card';
+    const stars = '★'.repeat(p.stars) + '☆'.repeat(5 - p.stars);
+    const oldHtml = p.old ? '<span class="product-price-old">' + p.old + ' DT</span>' : '';
+    d.innerHTML = '<div class="product-img">' + p.emoji + '</div><div class="product-body"><div class="product-cat">' + p.cat + '</div><div class="product-name">' + p.name + '</div><div><span class="product-price">' + p.price + ' DT</span>' + oldHtml + '</div><div class="product-footer"><div class="stars">' + stars + '</div><button class="btn-red" style="padding:6px 12px;font-size:10px" onclick="addToCart(\'' + p.name + '\',' + p.price + ',\'' + p.emoji + '\')">+ Panier</button></div></div>';
+    grid.appendChild(d);
+  });
+}
+
+function filterProducts(el, filter) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  renderProducts(filter);
+}
+
+function addToCart(name, price, emoji) {
+  const existing = cart.find(c => c.name === name);
+  if (existing) { existing.qty++; } else { cart.push({name, emoji, price, qty: 1}); }
+  updateCart();
+}
+
+function updateCart() {
+  const total = cart.reduce((s, c) => s + c.price * c.qty, 0);
+  document.getElementById('cart-total').textContent = total + ' DT';
+  document.getElementById('profil-total').textContent = total + ' DT';
+  document.getElementById('cart-count').textContent = cart.reduce((s, c) => s + c.qty, 0);
+  document.getElementById('cart-badge').textContent = cart.reduce((s, c) => s + c.qty, 0);
+  renderCart('cart-items');
+  renderCart('profil-cart');
+}
+
+function renderCart(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.innerHTML = '';
+  cart.forEach((c, i) => {
+    const div = document.createElement('div');
+    div.className = 'cart-item';
+    div.innerHTML = '<div class="cart-ico">' + c.emoji + '</div><div style="flex:1"><div class="cart-name">' + c.name + '</div><div class="cart-sub">' + c.price + ' DT / unité</div></div><div class="qty-ctrl"><button class="qty-btn" onclick="changeQty(' + i + ',-1)">−</button><div class="qty-val">' + c.qty + '</div><button class="qty-btn" onclick="changeQty(' + i + ',1)">+</button></div><div class="cart-price">' + (c.price * c.qty) + ' DT</div>';
+    el.appendChild(div);
+  });
+}
+
+function changeQty(i, delta) {
+  cart[i].qty = Math.max(0, cart[i].qty + delta);
+  if (cart[i].qty === 0) cart.splice(i, 1);
+  updateCart();
+}
+
+function renderTerrains(filter) {
+  const grid = document.getElementById('terrains-grid');
+  grid.innerHTML = '';
+  terrains.filter(t => filter === 'all' || t.sport === filter).forEach(t => {
+    const d = document.createElement('div');
+    d.className = 'terrain-card';
+    d.innerHTML = '<div class="terrain-img" style="background:' + t.bg + '">' + t.emoji + '</div><div class="terrain-body"><div class="terrain-name">' + t.name + '</div><div class="terrain-loc">' + t.loc + '</div><div class="terrain-info"><span class="pill ' + t.sc + '">' + t.status + '</span><span class="pill pill-gray">' + t.cap + '</span></div><div class="terrain-footer"><div class="terrain-price">' + t.price + ' DT<span style="font-size:10px;font-weight:400;color:#555">/h</span></div>' + (t.status !== 'Complet' ? '<button class="btn-red" style="padding:7px 14px;font-size:11px" onclick="openBooking(\'' + t.name + '\',' + t.price + ')">Réserver</button>' : '<button class="btn-dark" disabled style="padding:7px 14px;font-size:11px">Complet</button>') + '</div></div>';
+    grid.appendChild(d);
+  });
+}
+
+function filterTerrains(el, filter) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  renderTerrains(filter);
+}
+
+function openBooking(name, price) {
+  const form = document.getElementById('booking-form');
+  document.getElementById('booking-title').textContent = 'Réserver — ' + name + ' (' + price + ' DT/h)';
+  document.getElementById('booking-msg').textContent = '';
+  form.classList.add('active');
+  form.scrollIntoView({behavior: 'smooth', block: 'start'});
+  document.querySelectorAll('.slot').forEach(s => { if (!s.classList.contains('taken')) s.classList.remove('selected'); });
+}
+
+function selectSlot(el) {
+  document.querySelectorAll('.slot:not(.taken)').forEach(s => s.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function confirmBooking() {
+  const slot = document.querySelector('.slot.selected');
+  const date = document.getElementById('book-date').value;
+  if (!slot || !date) { document.getElementById('booking-msg').textContent = 'Veuillez choisir une date et un créneau horaire.'; document.getElementById('booking-msg').style.color = '#c0392b'; return; }
+  document.getElementById('booking-msg').textContent = 'Réservation confirmée pour le ' + date + ' à ' + slot.textContent + ' !';
+  document.getElementById('booking-msg').style.color = '#27ae60';
+  slot.classList.remove('selected');
+  slot.classList.add('taken');
+  slot.onclick = null;
+}
+
+renderProducts('all');
+renderTerrains('all');
+updateCart();
+</script>
+</body>
+</html>
